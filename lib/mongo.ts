@@ -1,22 +1,17 @@
-// lib/mongodb.js
-import { MongoClient } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 
-let uri = process.env.MONGODB_URI;
-let dbName = process.env.MONGODB_DB;
+const uri: string = process.env.MONGO_URI || '';
+const dbName: string = 'test';
 
-let cachedClient = null;
-let cachedDb = null;
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
 
 export async function connectToDatabase() {
     if (cachedClient && cachedDb) {
         return { client: cachedClient, db: cachedDb };
     }
 
-    const client = await MongoClient.connect(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-
+    const client = await MongoClient.connect(uri);
     const db = client.db(dbName);
 
     cachedClient = client;
